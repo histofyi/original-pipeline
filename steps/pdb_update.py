@@ -36,7 +36,6 @@ def update_local_pdb(localpdb_path:str, warehouse_path:str):
 
     update_command = f'localpdb_setup -db_path {localpdb_path} --update'
 
-
     os.system(update_command)
 
 
