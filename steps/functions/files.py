@@ -21,9 +21,15 @@ def load_constants(constants_name:str) -> Dict:
     
     """
     filepath = f'{config["CONSTANTS"]}/{constants_name}.json'
-    with open(filepath) as f:
-        json_data = json.load(f)
+    json_data = read_json(filepath)
     return json_data
+
+
+def read_json(filepath:str) -> Union[Dict,List]:
+    with open(filepath, 'r') as infile:
+        json_data = json.load(infile)
+    return json_data
+    
 
 
 def write_json(filepath:str, contents:Union[List,Dict], verbose:bool=False, pretty:bool=False):
