@@ -136,3 +136,5 @@ dmypy.json
 config.toml
 
 
+#tmp director
+tmp/
