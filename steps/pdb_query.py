@@ -11,15 +11,19 @@ from functions.cli import print_spacer
 
 from rich.progress import Progress
 from rich.console import Console
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--search_set")
+
+
+
 console = Console()
 
-search_set = 'truncated_class_i'
 
 
 
-chain_query_info = load_constants('chain_queries')[search_set]
-search_sequences = load_constants('search_sequences')[chain_query_info['sequences']]['sequences']
-search_labels = load_constants('search_sequences')[chain_query_info['sequences']]['labels']
+
 
 
 def setup_query(search_set:str='class_i') -> Tuple[Dict, List, List]:
@@ -27,13 +31,14 @@ def setup_query(search_set:str='class_i') -> Tuple[Dict, List, List]:
 
 
     """
-    query_info = load_constants('chain_queries')[search_set]
+    
+    chain_query_info = load_constants('chain_queries')[search_set]
     match_sequence_set = load_constants('search_sequences')[chain_query_info['sequences']]
     match_sequences = match_sequence_set['sequences']
     match_labels = match_sequence_set['labels']
 
     print (f'\nQuerying localpdb for {search_set}\n')
-    return query_info, match_sequences, match_labels
+    return chain_query_info, match_sequences, match_labels
 
 
 def match_chain(sequence:str, match_sequences:List, match_labels:List) -> Dict:
@@ -136,7 +141,13 @@ def run_query(localpdb_path:str, query_info:Dict, match_sequences:List, match_la
 
 
 def main():
+    args = parser.parse_args()
+
+    search_set = args.search_set
+
     config = toml.load('config.toml')
+
+ 
     query_info, match_sequences, match_labels = setup_query(search_set)
     possible_hits, searched = run_query(config['LOCALPDB_PATH'], query_info, match_sequences, match_labels)
     
