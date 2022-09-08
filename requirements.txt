@@ -1,2 +1,7 @@
 fuzzywuzzy[speedup]
 localpdb
+rich
+boto3
+algoliasearch
+requests
+flask
