@@ -25,6 +25,22 @@ def load_constants(constants_name:str) -> Dict:
     return json_data
 
 
+def load_facet(pdb_code:str, facet_name:str) -> Dict:
+    """
+    This function returns a facet (such as 'peptide_details') for a specific pdb code
+
+    Args:
+        pdb_code (str): the pdb code in question e.g. 1hhk
+        facet_name (str): the required facet e.g. alike_chains
+    """
+    filepath = f'{config["WAREHOUSE_PATH"]}/structures/info/public/{facet_name}/{pdb_code}.json'
+    try:
+        json_data = read_json(filepath)
+    except:
+        json_data = None
+    return json_data
+
+
 def read_json(filepath:str) -> Union[Dict,List]:
     with open(filepath, 'r') as infile:
         json_data = json.load(infile)
