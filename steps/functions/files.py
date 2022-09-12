@@ -41,6 +41,11 @@ def load_facet(pdb_code:str, facet_name:str) -> Dict:
     return json_data
 
 
+def write_facet(pdb_code:str, facet_name:str, contents:Dict):
+    filepath = f'{config["WAREHOUSE_PATH"]}/structures/info/public/{facet_name}/{pdb_code}.json'
+    write_json(filepath, contents, verbose=True, pretty=True)
+
+
 def read_json(filepath:str) -> Union[Dict,List]:
     with open(filepath, 'r') as infile:
         json_data = json.load(infile)
