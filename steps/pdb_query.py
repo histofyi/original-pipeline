@@ -20,18 +20,13 @@ parser.add_argument("--search_set")
 
 console = Console()
 
-
-
-
-
-
+class_i_starts = load_constants('mhc_starts')['class_i']['alpha']
 
 def setup_query(search_set:str='class_i') -> Tuple[Dict, List, List]:
     """
 
 
     """
-    
     chain_query_info = load_constants('chain_queries')[search_set]
     match_sequence_set = load_constants('search_sequences')[chain_query_info['sequences']]
     match_sequences = match_sequence_set['sequences']
@@ -46,6 +41,17 @@ def match_chain(sequence:str, match_sequences:List, match_labels:List) -> Dict:
     hit = False
     best_ratio = 0
     best_match = None
+    
+    start_index = None
+    for class_i_start in class_i_starts:
+        if class_i_start in sequence:
+            start_index = sequence.index(class_i_start)
+
+    if start_index:
+        sequence = sequence[start_index:]
+        if len(sequence) > 275:
+            sequence = sequence[:275]
+
     for test in match_sequences:
         if len(test) > len(sequence):
             test = test[0:len(sequence) - 1]
