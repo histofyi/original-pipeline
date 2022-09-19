@@ -5,7 +5,7 @@ import json
 
 from functions.cli import print_spacer
 from functions.files import write_json, read_json
-from functions.pdb import load_structure
+from functions.pdb import load_structure, load_pdb_lists
 
 from localpdb import PDB
 
@@ -117,22 +117,9 @@ def residue_is_natural(pdb_code:str, residue) -> Tuple[bool, bool, str]:
         return False, False, None
 
 
-def load_pdb_lists(mhc_class:str, warehouse_path:str) -> List:
-    console.rule(f'[bold]Loading pdb code lists for - {mhc_class}')
-    pdb_codes = []
-    for structure_type in ['class_i','truncated_class_i']:
-        print (f'Loading {structure_type}')
-        filepath = f'{warehouse_path}/queries/{structure_type}_hits.json'
-        json_data = read_json(filepath)
-        pdb_codes += [pdb_code for pdb_code in json_data]
-    return pdb_codes
 
 
-
-
-
-
-pdb_codes = load_pdb_lists('class_i', config['WAREHOUSE_PATH'])
+pdb_codes = load_pdb_lists('class_i', config['WAREHOUSE_PATH'], console)
 
 
 console.rule(f'[bold]Matching pdb_codes with localpdb')
