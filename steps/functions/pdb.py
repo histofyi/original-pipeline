@@ -22,7 +22,7 @@ def load_pdb_lists(mhc_class:str, warehouse_path:str, console) -> List:
     console.rule(f'[bold]Loading pdb code lists for - {mhc_class}')
     exclude = load_constants('exclude')
     pdb_codes = []
-    for structure_type in ['class_i','truncated_class_i','full_length_class_i']:
+    for structure_type in ['class_i','truncated_class_i','full_length_class_i', 'single_chain_class_i']:
         print (f'Loading {structure_type}')
         filepath = f'{warehouse_path}/queries/{structure_type}_hits.json'
         json_data = read_json(filepath)
