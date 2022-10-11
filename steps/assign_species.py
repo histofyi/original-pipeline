@@ -68,7 +68,8 @@ with Progress() as progress:
                                 if 'source' in molecule:
                                     assigned.append(pdb_code)
                                     species_info = get_species_info(molecule['source'][0]['organism_scientific_name'], species)
-                                    species_info['match_type'] = 'histo:assign_species'
+                                    if species_info is not None:
+                                        species_info['match_type'] = 'histo:assign_species'
             if not species_info:
                 missing.append(pdb_code)
             else:
@@ -82,3 +83,6 @@ with Progress() as progress:
 print (f'{len(assigned)} assigned automatically')
 print (f'{len(overrides)} assigned using overrides')
 print (f'{len(missing)} unassigned')
+
+if len(missing) > 0:
+    print (missing)
