@@ -73,8 +73,17 @@ This step assigns the species automatically based on the alpha chain. There are 
 
 This step assigns the alpha chain of the molecule against a collection of canonical sequences
 
+`python steps/fetch_chronology_data.py --mhc_class=class_i`
 
+This step fetches the data on deposition, release and update dates from the PBDe REST API
 
+`python steps/fetch_experimental_data.py --mhc_class=class_i`
+
+This step fetches experimental data from the PDBe REST API
+
+`python steps/fetch_publication_info.py --mhc_class=class_i`
+
+This step fetches the publication information from the PDBe REST API and then adds information from PMCe about Open Access and resolves any available DOI
 
 
 
