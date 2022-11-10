@@ -30,33 +30,39 @@ with Progress() as progress:
 
     for pdb_code in pdb_codes:
 
-        print (pdb_code)
+        experiment_data = load_facet(pdb_code, 'experiment')
 
-        experiment_info, success, errors = PDBeProvider(pdb_code).fetch_experiment()
+        if not experiment_data:
 
-        abridged_info = {}
-        
-        if experiment_info:
-            if slugify(experiment_info['experimental_method']) == 'x_ray_diffraction':
-                abridged_info['resolution'] = experiment_info['resolution_high']
-                abridged_info['spacegroup'] = experiment_info['spacegroup']
-                abridged_info['cell'] = experiment_info['cell']
-            elif slugify(experiment_info['experimental_method']) == 'electron_microscopy':
-                abridged_info['resolution'] = experiment_info['resolution']
+            print (pdb_code)
+
+            experiment_info, success, errors = PDBeProvider(pdb_code).fetch_experiment()
+
+            abridged_info = {}
+            
+            if experiment_info:
+                if slugify(experiment_info['experimental_method']) == 'x_ray_diffraction':
+                    abridged_info['resolution'] = experiment_info['resolution_high']
+                    abridged_info['spacegroup'] = experiment_info['spacegroup']
+                    abridged_info['cell'] = experiment_info['cell']
+                elif slugify(experiment_info['experimental_method']) == 'electron_microscopy':
+                    abridged_info['resolution'] = experiment_info['resolution']
+                else:
+                    abridged_info['resolution'] = None
+                    #abridged_info['nmr_spectrum_type'] = experiment_info['spectrum_type']
+                abridged_info['experimental_method'] = experiment_info['experimental_method']
+
+            print (abridged_info)
+            if len(abridged_info) > 0:
+                write_facet(pdb_code, 'experiment', abridged_info)
+                completed.append(pdb_code)
             else:
-                abridged_info['resolution'] = None
-                #abridged_info['nmr_spectrum_type'] = experiment_info['spectrum_type']
-            abridged_info['experimental_method'] = experiment_info['experimental_method']
-
-        print (abridged_info)
-        if len(abridged_info) > 0:
-            write_facet(pdb_code, 'experiment', abridged_info)
-            completed.append(pdb_code)
+                failed.append(pdb_code)
+            
+            print_spacer()
         else:
-            failed.append(pdb_code)
-        
-        print_spacer()
-
+            completed.append(pdb_code)
+            
         progress.update(task, advance=1)
 
 print (len(pdb_codes))

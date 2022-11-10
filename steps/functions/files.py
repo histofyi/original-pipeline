@@ -63,6 +63,13 @@ def write_json(filepath:str, contents:Union[List,Dict], verbose:bool=False, pret
         print (f'JSON file \'{filepath}\' written')
 
 
+def write_file(filepath:str, contents:str, verbose:bool=False):
+    with open(filepath,'w') as outfile:
+        outfile.write(contents)
+    if verbose:
+        print (f'String file \'{filepath}\' written')
+    
+
 def remove_file(filepath:str, verbose:bool=False):
     if os.path.exists(filepath):
         os.remove(filepath)

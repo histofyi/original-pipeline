@@ -30,7 +30,7 @@ with Progress() as progress:
 
     for pdb_code in pdb_codes:
 
-        chronology_data = load_facet(pdb_code, 'chronology')
+        chronology_data = load_facet(pdb_code, 'titles')
 
         if not chronology_data:
 
@@ -38,17 +38,18 @@ with Progress() as progress:
 
             summary, success, errors = PDBeProvider(pdb_code).fetch_summary()
 
-            date_info = {}
+            title_info = {}
 
             if summary:
                 
-                for date in ['deposition_date','release_date','revision_date']:
-                    date_info[date] = parse_date_to_isoformat(summary[date])
+                title_info['pdb_title_original'] = summary['title']
+                title_info['pdb_title_capitalized'] = summary['title'].capitalize()
                 
-                print (date_info) 
+                
+                print (title_info) 
 
-                if len(date_info) > 0:
-                    write_facet(pdb_code, 'chronology', date_info)
+                if len(title_info) > 0:
+                    write_facet(pdb_code, 'titles', title_info)
                     completed.append(pdb_code)
                 else:
                     failed.append(pdb_code)

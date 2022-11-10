@@ -166,7 +166,6 @@ with Progress() as progress:
         if not assigned_chains:
             print ('NO ASSIGNED CHAINS?')
         else:
-
             i = 1
             for chain in molecules_info:
                 uniprot_id = None
@@ -190,19 +189,11 @@ with Progress() as progress:
                                                 print ('MATCH IN SEQUENCE\n')
                                             else:
                                                 print ('MISMATCH IN SEQUENCE\n')
-                                    
-
                 i += 1
                     
 
         print (uniprot_info)
-        
-        print_spacer()
 
-        progress.update(task, advance=1)
-
-
-rcsb = rcsbProvider(pdb_code)
 
 
 

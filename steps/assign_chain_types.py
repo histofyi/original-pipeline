@@ -163,6 +163,9 @@ def assign_chain_types_for_list(pdb_codes:str, warehouse_path:str, all_chains, c
  
                     chain_overrides = assign_chain_types_overrides[pdb_code]
 
+                    if 'force_override' in chain_overrides:
+                        del chain_overrides['force_override']
+                        
                     for chain in chain_overrides:
                         not_matched = False
                         if chain != 'note':
@@ -188,7 +191,7 @@ def assign_chain_types_for_list(pdb_codes:str, warehouse_path:str, all_chains, c
                                         print (f'sequence_retrieval_error for {localpdb_chain}')
                     if 'peptide_fragment1' in chain_set:
                         del chain_set['peptide']
-                            
+
                     chain_set['note'] = chain_overrides['note']
                     print (f'Revised chain_set for {pdb_code}:')
                     for part in chain_set:
@@ -201,7 +204,19 @@ def assign_chain_types_for_list(pdb_codes:str, warehouse_path:str, all_chains, c
                     print_spacer()
 
                 partially_matched.append(pdb_code)
-
+            if pdb_code in assign_chain_types_overrides:
+                print (pdb_code)
+                if 'force_override' in assign_chain_types_overrides[pdb_code]:
+                    chain_set = {k:v for k,v in assign_chain_types_overrides[pdb_code].items() if k != 'force_override'}
+                    # TODO work out how to get chain sequences in here
+                    chain_overrides = assign_chain_types_overrides[pdb_code]
+                    for chain in chain_overrides:
+                        print (chain)
+                        if chain not in ['note','force_override']:
+                            if not 'sequence' in chain_set[chain]:
+                                chain_label = chain_overrides[chain]['chains'][0]
+                                localpdb_chain = f'{pdb_code}_{chain_label}'
+                                chain_set[chain]['sequence'] = all_chains.loc[localpdb_chain]['sequence']
             write_facet(pdb_code, 'assigned_chains', chain_set)
             progress.update(task, advance=1)
     

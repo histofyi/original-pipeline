@@ -91,7 +91,7 @@ def run_query(lpdb, query_info:Dict, match_sequences:List, match_labels:List, hi
 
     with Progress() as progress:
         
-        task = progress.add_task(f"[white]Processing... {query_info["label"]} [{results_count} length matches]", total=results_count)
+        task = progress.add_task(f'[white]Processing... {query_info["label"]} [{results_count} length matches]', total=results_count)
 
         for structure in results.index:
             
@@ -165,6 +165,8 @@ def run_mhc_class(mhc_class:str, config:Dict):
 
     lpdb = PDB(db_path=config['LOCALPDB_PATH'])
 
+    all_new = {}
+
     for search_set in chain_query_info:
         query_info = chain_query_info[search_set]
 
@@ -179,7 +181,9 @@ def run_mhc_class(mhc_class:str, config:Dict):
             print (new_hits)
             new_hits_filepath = f'{config["OUTPUT_PATH"]}/queries/{query_info["label"]}_new_{version}.json'
             write_json(new_hits_filepath, new_hits, verbose=True, pretty=True)
-        
+            for pdb_code in new_hits:
+                all_new[pdb_code] = new_hits[pdb_code]
+
         print('')
         console.rule('[bold]Stats and saving output')
         print (f'{len(possible_hits)} matches found from {len(searched)} sequence length search results\n')
@@ -196,6 +200,9 @@ def run_mhc_class(mhc_class:str, config:Dict):
 
         filepath = f'tmp/{query_info["label"]}_match_checkpoint.json'
         remove_file(filepath, verbose=True)
+    if len(all_new) > 0:
+        all_new_filepath = f'{config["OUTPUT_PATH"]}/queries/{mhc_class}_new_{version}.json'
+        write_json(all_new_filepath, all_new, verbose=True, pretty=True)
 
 
 def main():
