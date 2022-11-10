@@ -174,7 +174,11 @@ for pdb_code in pdb_codes:
         current_facet = load_facet(pdb_code, facet)
         core = process_facet(core, current_facet, facet, facets[facet])
     core = process_urls(core, pdb_code)
-    listings[pdb_code] = make_listing(core)
+    write_facet(pdb_code, 'hydrated', core)
+
+    listing = make_listing(core)
+    write_facet(pdb_code, 'listing', listing)
+    listings[pdb_code] = listing
     cores[pdb_code] = core
     
 
