@@ -5,7 +5,7 @@ from functions.helpers import slugify
 from functions.files import write_json
 from functions.cli import load_config
 
-package_list = "numpy,localpdb,biopandas,pymol,pandas,scipy,fuzzywuzzy,algoliasearch"
+package_list = "numpy,localpdb,biopandas,pymol,pandas,scipy,fuzzywuzzy,algoliasearch,datasette"
 
 
 def load_modules(package_list:str):
