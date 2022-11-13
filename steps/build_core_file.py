@@ -129,6 +129,7 @@ def make_listing(core:Dict) -> Dict:
     listing['components'] = core['components']
     listing['species'] = core['species']['common_name']
     listing['title'] = core['title']
+    listing['deposition_year'] = core['chronology']['deposition_year']
     if 'peptide_length' in core:
         listing['peptide_length'] = core['peptide_length']
         listing['peptide_length_name'] = core['peptide_length_name']
