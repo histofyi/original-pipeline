@@ -1,7 +1,7 @@
 from typing import Dict, List, Tuple
 
 
-from functions.files import write_json, read_json
+from functions.files import write_json, read_json, load_constants
 from functions.helpers import slugify
 from functions.cli import load_config
 
@@ -14,6 +14,18 @@ index_filepath = f'{config["WAREHOUSE_PATH"]}/datacompilations/index.json'
 core_filepath = f'{config["WAREHOUSE_PATH"]}/datacompilations/core.json'
 
 sets_filepath = f'{config["WAREHOUSE_PATH"]}/datacompilations/sets.json'
+
+complex_types_raw = load_constants('complex_types')
+peptide_feature_labels = load_constants('peptide_features')
+
+complex_types = {}
+
+for component_number in complex_types_raw:
+    for complex_type in complex_types_raw[component_number]:
+        slug = complex_type['slug']
+        if not slug in complex_types:
+            complex_types[slug] = complex_type
+print (complex_types)
 
 
 indexes = read_json(index_filepath)
@@ -56,7 +68,7 @@ def build_species_sets():
         if not species_slug in species_sets:
             species_sets[species_slug] = build_blank_set()
             species_sets[species_slug]['slug'] = species_slug
-            species_sets[species_slug]['title'] = f'{core["species"]["common_name"]} Class I'
+            species_sets[species_slug]['title'] = f'{core["species"]["common_name"]} Class I structures'
         species_sets[species_slug]['members'].append(pdb_code)
         species_sets[species_slug]['count'] += 1
     return species_sets
@@ -71,7 +83,7 @@ def build_loci_sets():
             if not locus in loci_sets:
                 loci_sets[locus] = build_blank_set()
             loci_sets[locus]['slug'] = locus
-            loci_sets[locus]['title'] = f'{locus} structures'
+            loci_sets[locus]['title'] = f'{core["allele"]["alpha"]["locus"].upper()} structures'
             loci_sets[locus]['members'].append(pdb_code)
             loci_sets[locus]['count'] += 1
     return loci_sets
@@ -121,7 +133,7 @@ def build_peptide_sequence_sets():
                 if not peptide_sequence in peptide_sequence_sets:
                     peptide_sequence_sets[peptide_sequence] = build_blank_set()
                     peptide_sequence_sets[peptide_sequence]['slug'] = peptide_sequence.lower()
-                    peptide_sequence_sets[peptide_sequence]['title'] = f'Peptide : {peptide_sequence.upper()}'
+                    peptide_sequence_sets[peptide_sequence]['title'] = f'Structures containing "{peptide_sequence.upper()}"'
                 peptide_sequence_sets[peptide_sequence]['members'].append(pdb_code)
                 peptide_sequence_sets[peptide_sequence]['count'] += 1
     return peptide_sequence_sets
@@ -137,10 +149,12 @@ def build_peptide_length_sets():
                 if not peptide_length in peptide_length_sets:
                     peptide_length_sets[peptide_length] = build_blank_set()
                     peptide_length_sets[peptide_length]['slug'] = peptide_length
-                    peptide_length_sets[peptide_length]['title'] = f'{peptide_length.capitalize()} peptides'
+                    peptide_length_sets[peptide_length]['title'] = f'{peptide_length.capitalize()} peptide structures'
                 peptide_length_sets[peptide_length]['members'].append(pdb_code)
                 peptide_length_sets[peptide_length]['count'] += 1
     return peptide_length_sets
+
+all_peptide_features = []
 
 
 def build_peptide_feature_sets():
@@ -154,10 +168,12 @@ def build_peptide_feature_sets():
                     if 'features' in core['peptide'][peptide] and i == 0:
                         peptide_features = core['peptide'][peptide]['features']
                         for peptide_feature in peptide_features:
+                            if peptide_feature not in all_peptide_features:
+                                all_peptide_features.append(peptide_feature)
                             if peptide_feature not in peptide_feature_sets:
                                 peptide_feature_sets[peptide_feature] = build_blank_set()
                                 peptide_feature_sets[peptide_feature]['slug'] = peptide_feature
-                                peptide_feature_sets[peptide_feature]['title'] = None
+                                peptide_feature_sets[peptide_feature]['title'] = peptide_feature_labels[peptide_feature]
                             peptide_feature_sets[peptide_feature]['members'].append(pdb_code)
                             peptide_feature_sets[peptide_feature]['count'] += 1
                 i += 1
@@ -174,13 +190,13 @@ def build_complex_type_sets():
                 if not complex_type in complex_type_sets:
                     complex_type_sets[complex_type] = build_blank_set()
                     complex_type_sets[complex_type]['slug'] = complex_type
-                    complex_type_sets[complex_type]['title'] = None                
+                    complex_type_sets[complex_type]['title'] = complex_types[complex_type]['label']                 
                 complex_type_sets[complex_type]['members'].append(pdb_code)
                 complex_type_sets[complex_type]['count'] += 1
     return complex_type_sets
 
 
-def build_chronology_sets(chronology_type):
+def build_chronology_sets(chronology_type, chronology_title):
     chronology_type_sets = {}
     for pdb_code in default_ordering:
         core = cores[pdb_code]
@@ -188,7 +204,7 @@ def build_chronology_sets(chronology_type):
         if not chronology_year in chronology_type_sets:
             chronology_type_sets[chronology_year] = build_blank_set()
             chronology_type_sets[chronology_year]['slug'] = str(chronology_year)
-            chronology_type_sets[chronology_year]['title'] = None                
+            chronology_type_sets[chronology_year]['title'] = f'Structures {chronology_title} in {chronology_year}'                
         chronology_type_sets[chronology_year]['members'].append(pdb_code)
         chronology_type_sets[chronology_year]['count'] += 1
     return chronology_type_sets
@@ -200,11 +216,12 @@ def build_resolution_sets():
         core = cores[pdb_code]
         if core['resolution'] is not None:
             resolution_low = int(core['resolution'].split('.')[0])
-            resolution = f'{resolution_low}_{resolution_low + 1}'         
+            resolution_high = resolution_low + 0.99
+            resolution = f'{resolution_low}_{resolution_high}'         
             if not resolution in resolution_sets:
                 resolution_sets[resolution] = build_blank_set()
                 resolution_sets[resolution]['slug'] = resolution
-                resolution_sets[resolution]['title'] = None                
+                resolution_sets[resolution]['title'] = f'Structures between {resolution_low} and {resolution_high} &#8491;resolution'                
             resolution_sets[resolution]['members'].append(pdb_code)
             resolution_sets[resolution]['count'] += 1
     return resolution_sets
@@ -247,9 +264,9 @@ sets['peptide_features'] = build_peptide_feature_sets()
 
 sets['complex_types'] = build_complex_type_sets()
 
-sets['deposited'] = build_chronology_sets('deposition')
-sets['revised'] = build_chronology_sets('revision')
-sets['released'] = build_chronology_sets('release')
+sets['deposited'] = build_chronology_sets('deposition', 'deposited')
+sets['revised'] = build_chronology_sets('revision', 'revised')
+sets['released'] = build_chronology_sets('release', 'released')
 
 sets['resolutions'] = build_resolution_sets()
 
