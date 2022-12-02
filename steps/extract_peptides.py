@@ -42,7 +42,7 @@ def extract_peptides(peptide_chains:str, assembly_name:str, input_folder:str, wa
     
     structure = PDBParser(PERMISSIVE=1).get_structure(assembly_name, input_filename)
 
-    coordinate_server_url = 'https://coordinates.histo.fyi/structures/view/class_i/'
+    coordinate_server_url = 'https://coordinates.histo.fyi/structures/view/class_i'
     filetype_filename = f'{assembly_name}_{filetype}'
 
 
