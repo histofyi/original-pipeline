@@ -1,5 +1,4 @@
 from typing import List
-from pymol import cmd
 
 import os
 
