@@ -28,11 +28,12 @@ orientations = {
         }
     }
 
+orientation = 'side'
 
 def cleft_top_image(assembly_name, has_peptide, abd_folder, peptide_folder, abd_output_folder, peptide_output_folder):
     image_string = ""
 
-    orientation = 'top'
+
 
     abd_load_string = f"cmd.load('{abd_folder}/{assembly_name}.pdb', 'class_i')\n"
     peptide_load_string = f"cmd.load('{peptide_folder}/{assembly_name}.pdb', 'peptide')\n"
@@ -51,8 +52,8 @@ cmd.color("gray80","class_i")
 
     abd_save_large = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_large.png', width=2600, height=2200, dpi=300, ray=1, quiet=0)\n"
     abd_save_medium = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_medium.png', width=1300, height=1000, dpi=300, ray=1, quiet=0)\n"
-    abd_save_small = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_small_.png', width=650, height=500, dpi=300, ray=1, quiet=0)\n"
-    abd_save_thumb = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_thumb_.png', width=325, height=250, dpi=300, ray=1, quiet=0)\n"
+    abd_save_small = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_small.png', width=650, height=500, dpi=300, ray=1, quiet=0)\n"
+    abd_save_thumb = f"cmd.png('{abd_output_folder}/{assembly_name}_cutaway_thumb.png', width=325, height=250, dpi=300, ray=1, quiet=0)\n"
 
     peptide_setup_string = """
 cmd.delete('class_i')
@@ -65,8 +66,8 @@ cmd.remove("hydro")
 
     peptide_save_large = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_large.png', width=2600, height=2200, dpi=300, ray=1, quiet=0)\n"
     peptide_save_medium = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_medium.png', width=1300, height=1000, dpi=300, ray=1, quiet=0)\n"
-    peptide_save_small = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_small_.png', width=650, height=500, dpi=300, ray=1, quiet=0)\n"
-    peptide_save_thumb = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_thumb_.png', width=325, height=250, dpi=300, ray=1, quiet=0)\n"
+    peptide_save_small = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_small.png', width=650, height=500, dpi=300, ray=1, quiet=0)\n"
+    peptide_save_thumb = f"cmd.png('{peptide_output_folder}/{assembly_name}_peptide_thumb.png', width=325, height=250, dpi=300, ray=1, quiet=0)\n"
 
 
     cleanup_string = "cmd.delete('all')\n"
@@ -132,8 +133,6 @@ def perform_action(to_process:List, mhc_class:str, abd_input_folder:str, abd_out
 
         else:
             has_peptide = False
-        
-
 
         if assembly_id == '1':  
             this_image_string = cleft_top_image(assembly_name, has_peptide, abd_input_folder, peptide_input_folder, abd_output_folder, peptide_output_folder)
@@ -150,10 +149,10 @@ def main():
     config = load_config()
     
     abd_input_folder = f'{config["WAREHOUSE_PATH"]}/structures/coordinates/public/class_i/without_solvent/antigen_binding_domains'    
-    abd_output_folder = f'{config["IMAGES_PATH"]}/cleft/top/cutaway'
+    abd_output_folder = f'{config["IMAGES_PATH"]}/cleft/{orientation}/cutaway'
 
     peptide_input_folder = f'{config["WAREHOUSE_PATH"]}/structures/coordinates/public/class_i/without_solvent/peptide'
-    peptide_output_folder = f'{config["IMAGES_PATH"]}/cleft/top/peptide'
+    peptide_output_folder = f'{config["IMAGES_PATH"]}/cleft/{orientation}/peptide'
 
 
 
@@ -164,7 +163,7 @@ def main():
 
     image_string+= 'cmd.quit()'
 
-    write_file(f'{config["TMP_PATH"]}/cleft_top.py',image_string)
+    write_file(f'{config["TMP_PATH"]}/cleft_{orientation}.py',image_string)
 
 main()    
 
