@@ -116,7 +116,7 @@ def main():
 
 
     structures = [file.split('.')[0] for file in os.listdir(input_folder) if len(file.split('.')[0]) > 0]
-    structures = ['1hhg_1','1hhh_1','1hhi_1','1hhk_1']
+    #structures = ['1hhg_1','1hhh_1','1hhi_1','1hhk_1']
 
     image_string = perform_action(structures, 'class_i', input_folder, output_folder)
 
