@@ -107,6 +107,19 @@ def process_assemblies(core:Dict, facet:Dict) -> Dict:
     return core
 
 
+def process_peptide_neighbours(core:Dict, facet:Dict) -> Dict:
+    if facet:
+        core['peptide_neighbours'] = facet
+    return core
+
+
+def process_pockets(core:Dict, facet:Dict) -> Dict:
+    if core['class'] == 'class_i' and core['classical'] == True:
+        if facet:
+            core['pockets'] = facet
+    return core
+
+
 def process_title(core:Dict, facet:Dict) -> Dict:
     core['pdb_title'] = pick_best_title(core, facet)
     core['pdb_title'] = clean_title(core, facet)
@@ -147,6 +160,8 @@ facets = {
     'publication_details':process_publication_details,
     'species':process_species, 
     'tcr_details':process_tcr_details,
+    'peptide_neighbours':process_peptide_neighbours,
+    'pockets':process_pockets,
     'titles':process_title
 }
 
