@@ -39,10 +39,11 @@ def trim_class_i_sequences(sequence:str, start:str, first_res:bool) -> str:
     return trimmed_sequence
 
 
-def build_sequence_array(first_res:bool, trimmed_sequence:str) -> List:
+def build_sequence_array(allele_name_slug:str, first_res:bool, trimmed_sequence:str) -> List:
     if not first_res:
         trimmed_sequence = '-' + trimmed_sequence
     sequence_array = [residue for residue in trimmed_sequence]
+    sequence_array.insert(0,allele_name_slug)
     return sequence_array
 
 
@@ -87,7 +88,7 @@ for entry in fasta_reader(input_file):
                                 'species_stem':'hla',
                                 'sequence':trimmed_sequence
                             }
-                            sequence_array = build_sequence_array(first_res, trimmed_sequence)
+                            sequence_array = build_sequence_array(allele_name_slug, first_res, trimmed_sequence)
                             sequences[allele_name_slug] = sequence_array
 
 
